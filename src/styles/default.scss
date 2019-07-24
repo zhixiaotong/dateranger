@@ -1,0 +1,26 @@
+	// 日期范围组件
+  .uni-date-ranger.default {
+    .not-select-process {
+      background-color: #fff;
+      border: 1px solid #dcdfe6;
+    }
+    .range-label {
+      color: #409eff;
+    }
+    .process {
+      background-color: #409eff;
+    }
+    .select-label {
+      background-color: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      &:after {
+        border-top-color: rgba(0, 0, 0, 0.6);
+      }
+    }
+    .select-label-2 {
+      &:after {
+        border-top-color: transparent;
+        border-bottom-color: rgba(0, 0, 0, 0.6);
+      }
+    }
+  }
