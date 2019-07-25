@@ -1,5 +1,5 @@
 # dateranger
-基于element-ui风格的vue日期拖拽选择插件
+基于momentjs、element-ui风格的vue日期拖拽选择插件
 
 ## Project setup
 ```

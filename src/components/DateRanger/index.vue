@@ -331,19 +331,27 @@ export default {
       if (this.defaultValue == null) {
         this.label1 = this.label2 = this.minValue;
       } else {
-        if (
-          !moment.isMoment(this.defaultValue.min) &&
-          isString(this.defaultValue.min) &&
-          moment(this.defaultValue.min, this.formatYMD).isValid()
-        ) {
-          this.label1 = moment(this.defaultValue.min, this.formatYMD);
+        // 字符串
+        if (moment.isMoment(this.defaultValue.min)) {
+          this.label1 = this.defaultValue.min;
+        } else {
+          if (
+            isString(this.defaultValue.min) &&
+            moment(this.defaultValue.min, this.formatYMD).isValid()
+          ) {
+            this.label1 = moment(this.defaultValue.min, this.formatYMD);
+          }
         }
-        if (
-          !moment.isMoment(this.defaultValue.max) &&
-          isString(this.defaultValue.max) &&
-          moment(this.defaultValue.max, this.formatYMD).isValid()
-        ) {
-          this.label2 = moment(this.defaultValue.max, this.formatYMD);
+        // 字符串
+        if (moment.isMoment(this.defaultValue.max)) {
+          this.label2 = this.defaultValue.max;
+        } else {
+          if (
+            isString(this.defaultValue.max) &&
+            moment(this.defaultValue.max, this.formatYMD).isValid()
+          ) {
+            this.label2 = moment(this.defaultValue.max, this.formatYMD);
+          }
         }
         // 校验数据值
         if (this.limit !== null && this.limit.min && this.limit.max) {
@@ -366,6 +374,7 @@ export default {
       this.$el.addEventListener("mousemove", e => this.initMousemoveEvent(e));
       this.$el.addEventListener("mouseup", e => this.initMouseupEvent(e));
       document.body.addEventListener("mouseup", e => this.initMouseupEvent(e));
+      document.body.addEventListener("mouseout", e => this.initMouseupEvent(e));
       addResizeListener(this.$el, this.handleResize);
     });
   },
@@ -374,6 +383,9 @@ export default {
     this.$el.removeEventListener("mousemove", e => this.initMousemoveEvent(e));
     this.$el.removeEventListener("mouseup", e => this.initMouseupEvent(e));
     document.body.removeEventListener("mouseup", e => this.initMouseupEvent(e));
+    document.body.removeEventListener("mouseout", e =>
+      this.initMouseupEvent(e)
+    );
     if (this.$el && this.handleResize) {
       removeResizeListener(this.$el, this.handleResize);
     }
@@ -386,29 +398,20 @@ export default {
         moment(this.minValue, this.formatYMD).isValid()
       ) {
         this.minValue = moment(this.minValue, this.formatYMD);
-      } else {
-        if (moment(this.minValue, this.formatYMD).isValid())
-          throw new SyntaxError(
-            "min值必须是YYYY-MM-DD的日期字符串或moment对象"
-          );
+      } else if (!moment(this.minValue, this.formatYMD).isValid()) {
+        throw new SyntaxError("min值必须是YYYY-MM-DD的日期字符串或moment对象");
       }
       if (
         !moment.isMoment(this.maxValue) &&
         isString(this.maxValue) &&
         moment(this.maxValue, this.formatYMD)
       ) {
-        this.maxValue = moment(this.maxValue, this.formatYMD);
-      } else {
-        if (moment(this.maxValue, this.formatYMD).isValid())
-          throw new SyntaxError(
-            "max值必须是YYYY-MM-DD的日期字符串或moment对象"
-          );
+        this.maxValue = moment(`${this.maxValue} 23:59:59`, this.formatYMDHms);
+      } else if (!moment(this.maxValue, this.formatYMD).isValid()) {
+        throw new SyntaxError("max值必须是YYYY-MM-DD的日期字符串或moment对象");
       }
       if (this.minValue == null || this.maxValue == null) {
         throw new Error("min和max属性必传");
-      }
-      if (moment().isBefore(this.maxValue)) {
-        throw new Error("max值max不能超过当前最新时间");
       }
       if (this.shortcut.show && this.shortcut.options.length <= 0) {
         throw new Error("快捷时间段显示时，须设置内容");
@@ -686,21 +689,36 @@ export default {
             _limit = this.limit.min;
           }
           // 拖拽的是第一个select-label
-          if (this.isBtn === 1) {
-            if (duration < 0) {
-              tempLabel = moment(this.label1).add(_limit, "days");
-            } else {
-              tempLabel = moment(this.label1).subtract(_limit, "days");
-            }
-            this.label2 = tempLabel;
-          } else if (this.isBtn === 2) {
-            duration = moment(this.label2).diff(this.label1, "days");
-            if (duration < 0) {
-              tempLabel = moment(this.label2).add(_limit, "days");
-            } else {
-              tempLabel = moment(this.label2).subtract(_limit, "days");
-            }
-            this.label1 = tempLabel;
+          switch (this.isBtn) {
+            case 1:
+              if (duration < 0) {
+                tempLabel = moment(this.label1).add(_limit, "days");
+              } else {
+                tempLabel = moment(this.label1).subtract(_limit, "days");
+              }
+              if (tempLabel.isBefore(this.minValue)) {
+                tempLabel = moment(this.label1).add(_limit, "days");
+              } else if (tempLabel.isAfter(this.maxValue)) {
+                tempLabel = moment(this.label1).subtract(_limit, "days");
+              }
+              this.label2 = tempLabel;
+              break;
+            case 2:
+              duration = moment(this.label2).diff(this.label1, "days");
+              if (duration < 0) {
+                tempLabel = moment(this.label2).add(_limit, "days");
+              } else {
+                tempLabel = moment(this.label2).subtract(_limit, "days");
+              }
+              if (tempLabel.isBefore(this.minValue)) {
+                tempLabel = moment(this.label2).add(_limit, "days");
+              } else if (tempLabel.isAfter(this.maxValue)) {
+                tempLabel = moment(this.label2).subtract(_limit, "days");
+              }
+              this.label1 = tempLabel;
+              break;
+            default:
+              break;
           }
         }
         this.$nextTick(() => {
@@ -782,7 +800,7 @@ export default {
 .process {
   position: absolute;
   height: 20px;
-  top: 0;
+  top: 1px;
   left: 0;
   border-radius: 10px;
   cursor: pointer;
@@ -843,13 +861,19 @@ input {
   height: 20px;
   line-height: 20px;
 }
-.time-input >>> input {
-  height: 22px;
-  line-height: 22px;
-  padding: 0;
+.time-input {
+  width: 80px !important;
+  /deep/ input {
+    width: 100%;
+    height: 22px;
+    line-height: 22px;
+    padding: 0;
+  }
 }
-.time-input >>> .el-input__prefix {
-  display: none;
+.time-input {
+  /deep/ .el-input__prefix {
+    display: none;
+  }
 }
 .shortcut-dropdown {
   position: absolute;
@@ -863,10 +887,12 @@ input {
   white-space: nowrap;
   display: inline-block;
 }
-.range-picker__input >>> input {
-  width: 100px;
-  height: 24px;
-  line-height: 24px;
-  padding: 0 10px;
+.range-picker__input {
+  /deep/ input {
+    width: 100px;
+    height: 24px;
+    line-height: 24px;
+    padding: 0 10px;
+  }
 }
 </style>
