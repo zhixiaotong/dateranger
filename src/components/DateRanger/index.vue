@@ -768,6 +768,7 @@ export default {
 .not-select-process {
   display: block;
   height: 20px;
+  box-sizing: content-box;
   border: 0;
   border-radius: 10px;
 }
