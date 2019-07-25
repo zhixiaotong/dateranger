@@ -1,6 +1,9 @@
 # dateranger
 基于momentjs、element-ui风格的vue日期拖拽选择插件
 
+## 在线预览：
+https://zhixiaotong.github.io/demo-online/example/dateranger
+
 ## Project setup
 ```
 npm install
