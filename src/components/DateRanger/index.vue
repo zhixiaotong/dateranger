@@ -579,14 +579,13 @@ export default {
     },
     getTempWidth(e) {
       let tempWidth;
-      const x =
-        e.pageX - this.elementLeft(this.$el) - this.selectLabelWidth / 2;
-      if (x + this.selectLabelWidth / 2 - this.deviation > this.rangeWidth) {
+      const x = e.pageX - this.elementLeft(this.$el);
+      if (x - this.deviation > this.rangeWidth) {
         tempWidth = this.rangeWidth - this.selectLabelWidth / 2;
-      } else if (x + this.selectLabelWidth / 2 - this.deviation < 0) {
+      } else if (x - this.deviation < 0) {
         tempWidth = -this.selectLabelWidth / 2;
       } else {
-        tempWidth = x - this.deviation;
+        tempWidth = x - this.selectLabelWidth / 2 - this.deviation;
       }
       return tempWidth;
     },
@@ -642,10 +641,10 @@ export default {
           const tempWidth =
             e.pageX - this.elementLeft(this.$el) - this.deviation;
           const current = moment(this.minValue).add(
-            parseInt(
+            (
               (this.period / this.rangeWidth) *
                 (tempWidth - this.selectLabelWidth / 2)
-            ),
+            ).toFixed(0),
             "days"
           );
           const duration = Math.abs(
