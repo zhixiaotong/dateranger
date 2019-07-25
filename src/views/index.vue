@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <h3>基础使用</h3>
+    <h3>基础使用：日期字符串初始化</h3>
     <date-ranger
       class="date-ranger"
       v-model="dateOption1.value"
@@ -40,13 +40,13 @@
       v-model="dateOption6.value"
       v-bind="dateOption6"
     />
-    <h3>显示时间范围边界</h3>
+    <h3>显示时间范围边界：双击日期边界可进行更改</h3>
     <date-ranger
       class="date-ranger"
       v-model="dateOption7.value"
       v-bind="dateOption7"
     />
-    <h3>可编辑时间</h3>
+    <h3>可编辑时间：双击时分秒可进行更改</h3>
     <date-ranger
       class="date-ranger"
       v-model="dateOption8.value"
