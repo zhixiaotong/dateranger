@@ -4,30 +4,30 @@
 ## 在线预览：
 https://zhixiaotong.github.io/demo-online/example/dateranger
 
-## Project setup
+## 安装项目依赖
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### 本地开发者模式运行
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### 线上模式打包运行
 ```
 npm run build
 ```
 
-### Run your tests
+### 执行测试
 ```
 npm run test
 ```
 
-### Lints and fixes files
+### 提示和修复文件
 ```
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 自定义配置
+请参考 [Configuration Reference](https://cli.vuejs.org/config/).
