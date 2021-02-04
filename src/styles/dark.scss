@@ -2,25 +2,25 @@
     .uni-date-ranger.dark {
       .not-select-process {
         background-color: rgba(0, 0, 0, .3);
-        border: 1px solid #355f7a;
+        border: 1px solid #303030;
       }
       .range-label {
-        color: #409eff;
+        color: #177ddc;
       }
       .process {
-        background-color: #409eff;
+        background-color: #177ddc;
       }
       .select-label {
-        background-color: rgba(0, 117, 169, 0.5);
+        background-color: #4d4d4d;
         color: #fff;
         &:after {
-          border-top-color: rgba(0, 117, 169, 0.5);
+          border-top-color: #4d4d4d;
         }
       }
       .select-label-2 {
         &:after {
           border-top-color: transparent;
-          border-bottom-color: rgba(0, 117, 169, 0.5);
+          border-bottom-color: #4d4d4d;
         }
       }
     }
